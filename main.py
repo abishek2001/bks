@@ -76,28 +76,51 @@ st.markdown("""
     .card:hover {
         transform: scale(1.05);
     }
-            .cta {
+    .cta { 
         display: flex;
+        flex-wrap: wrap; /* Allows wrapping on smaller screens */
         background-color: #e6e6e6;
         padding: 30px;
         gap: 30px;
+        align-items: center;
+        justify-content: center;
     }
+
     .cta img {
-            width: 100%; /* Responsive width */
-            max-width: 500px; /* Large screens */
-            height: auto; /* Maintain aspect ratio */
-            
-            @media (max-width: 768px) { /* Medium screens */
-                max-width: 350px;
-            }
-            
-            @media (max-width: 480px) { /* Small screens */
-                max-width: 250px;
-            }
-        }
+        width: 100%;
+        max-width: 500px; /* Default for large screens */
+        height: auto;
+    }
+
     .cta-form {
         flex: 1;
+        min-width: 300px; /* Ensures form doesn't shrink too much */
     }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .cta {
+            flex-direction: column; /* Stack items on smaller screens */
+            text-align: center;
+        }
+        .cta img {
+            max-width: 350px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .cta img {
+            max-width: 250px;
+        }
+    }
+
+    .custom-title1 {
+        font-family: 'Nunito', sans-serif;
+        font-size: 32px;
+        font-weight: bold; /* Bold text */
+        text-align: center; /* Centers title on smaller screens */
+    }
+
     .contact-form input, .contact-form button {
         width: 100%;
         padding: 10px;
@@ -105,6 +128,7 @@ st.markdown("""
         border: 1px solid #ccc;
         border-radius: 4px;
     }
+
     .contact-form button {
         background-color: #333;
         color: white;
