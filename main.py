@@ -164,7 +164,6 @@ st.markdown("""
 <div class="nav-links">
     <a href="#home">HOME</a>
     <a href="#gallery">GALLERY</a>
-    <a href="#celeb-corner">CELEB CORNER</a>
     <a href="#contact">CONTACT US</a>
 </div>
 """, unsafe_allow_html=True)
