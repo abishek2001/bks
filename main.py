@@ -267,9 +267,14 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 st.markdown('<div id="gallery" class="section"></div>', unsafe_allow_html=True)
-st.markdown('<div class="custom-title-container"><div class="custom-title">What are you looking for?</div></div>', unsafe_allow_html=True)# Categories with images
+st.markdown("""
+<div class="banner" style="background-color: #F3F3F4; background-size: cover; font-family: 'Nunito', sans-serif; font-size: 32px;
+            font-weight: normal;
+            color: black; border-radius: 0px;">
+    What are you looking for?
+</div>
+""", unsafe_allow_html=True)
 col1, col2, col3 = st.columns(3)
-
 image_card("solo.jpeg", "SOLO", col1)
 image_card("couple2.jpeg", "COUPLES", col2)
 image_card("friends.jpeg", "FRIENDS", col3)
@@ -310,53 +315,76 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.markdown('<div id="celeb-corner" class="section"></div>', unsafe_allow_html=True)
-st.markdown('<div class="custom-title-container2"><div class="custom-title2">Celeb Corner</div></div>', unsafe_allow_html=True)# Categories with images
-
+st.markdown("""
+<div class="banner" style="background-color: #F3F3F4; background-size: cover; font-family: 'Nunito', sans-serif; font-size: 32px;
+            font-weight: normal;
+            color: black; border-radius: 0px; margin-bottom: 0px;">
+    Celeb Corner
+</div>
+""", unsafe_allow_html=True)
 # Image URLs and Captions
+def get_base64_image(image_path):
+    with open(image_path, "rb") as img_file:
+        return base64.b64encode(img_file.read()).decode()
+
+# List of images and captions (convert to base64)
 images = [
-    ("keerthy.jpeg", "Ms. Keerthy Suresh"),
-    ("arya.jpeg", "Mr. Arya"),
-    ("sam.jpeg", "Ms. Samantha Ruth Prabhu"),
-    ("arun.jpeg", "Mr. Arun Vijay"),
-    ("vaibhav.jpeg", "Mr. Vaibhav"),
-   ]
+    (get_base64_image("keerthy.jpeg"), "Ms. Keerthy Suresh"),
+    (get_base64_image("arya.jpeg"), "Mr. Arya"),
+    (get_base64_image("sam.jpeg"), "Ms. Samantha Ruth Prabhu"),
+    (get_base64_image("arun.jpeg"), "Mr. Arun Vijay"),
+    (get_base64_image("vaibhav.jpeg"), "Mr. Vaibhav"),
+]
 
+# Auto-refresh every 3 seconds
+count = st_autorefresh(interval=2000, limit=None, key="slider_key")
 
-# Inject CSS for responsive images with equal dimensions and smooth sliding animation
+# Calculate index for rotating images
+index = count % len(images)
+
+# Inject CSS for proper layout
 st.markdown(
     """
     <style>
-    .slider-container {
+    .slider-wrapper {
         display: flex;
         justify-content: center;
         align-items: center;
         gap: 10px;
         overflow: hidden;
         width: 100%;
-        margin-top: -90px;
     }
-    .slider-container img {
+    .slider-item {
+        flex: 1;
+        max-width: 200px;
+        text-align: center;
+    }
+    .slider-item img {
         width: 100%;
-        height: 250px;
-        max-width: 300px;
+        max-width: 150px;
+        height: auto;
+        border-radius: 10px;
         object-fit: cover;
-        transition: transform 1s ease-in-out;
     }
     .caption {
-        text-align: center;
-        font-size: 16px;
+        font-size: 14px;
         font-weight: bold;
         margin-top: 5px;
     }
-    @media (max-width: 768px) {
-        .slider-container {
-            flex-direction: column;
-            align-items: center;
+    
+    /* Responsive Styles */
+    @media (max-width: 768px) { /* Tablets */
+        .slider-wrapper {
+            flex-wrap: wrap;
         }
-        .slider-container img {
-            width: 80%;
-            height: 200px;
-            max-width: 250px;
+        .slider-item {
+            width: 45%;
+        }
+    }
+
+    @media (max-width: 480px) { /* Mobile */
+        .slider-item {
+            width: 90%;
         }
     }
     </style>
@@ -364,26 +392,26 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# Auto-refresh every 3 seconds
-count = st_autorefresh(interval=3000, limit=None, key="slider_key")
+# Generate dynamic HTML for images (base64 encoded)
+slider_html = f"""
+<div class="slider-wrapper">
+    <div class="slider-item">
+        <img src="data:image/jpeg;base64,{images[index % len(images)][0]}" />
+        <div class="caption">{images[index % len(images)][1]}</div>
+    </div>
+    <div class="slider-item">
+        <img src="data:image/jpeg;base64,{images[(index + 1) % len(images)][0]}" />
+        <div class="caption">{images[(index + 1) % len(images)][1]}</div>
+    </div>
+    <div class="slider-item">
+        <img src="data:image/jpeg;base64,{images[(index + 2) % len(images)][0]}" />
+        <div class="caption">{images[(index + 2) % len(images)][1]}</div>
+    </div>
+</div>
+"""
 
-# Calculate start index
-index = count % len(images)
-
-# Display images in a row with animation using columns
-col1, col2, col3 = st.columns(3)
-with col1:
-    st.image(images[index % len(images)][0], use_container_width=True)
-    st.markdown(f"<div class='caption'>{images[index % len(images)][1]}</div>", unsafe_allow_html=True)
-with col2:
-    st.image(images[(index + 1) % len(images)][0], use_container_width=True)
-    st.markdown(f"<div class='caption'>{images[(index + 1) % len(images)][1]}</div>", unsafe_allow_html=True)
-with col3:
-    st.image(images[(index + 2) % len(images)][0], use_container_width=True)
-    st.markdown(f"<div class='caption'>{images[(index + 2) % len(images)][1]}</div>", unsafe_allow_html=True)
-
-
-
+# Display the slider
+st.markdown(slider_html, unsafe_allow_html=True)
 
 st.markdown("""
     <style>
@@ -442,8 +470,13 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="custom-title-container"><div class="custom-title">What Clients Say</div></div>', unsafe_allow_html=True)# Categories with images
-
+st.markdown("""
+<div class="banner" style="background-color: #F3F3F4; background-size: cover; font-family: 'Nunito', sans-serif; font-size: 32px;
+            font-weight: normal;
+            color: black; border-radius: 0px; margin-bottom: 10px;">
+    What Clients Say
+</div>
+""", unsafe_allow_html=True)
 col1, col2, col3 = st.columns(3)
 
 with col1:
